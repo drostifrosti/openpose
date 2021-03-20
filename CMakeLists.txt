@@ -400,7 +400,7 @@ else (${WITH_EIGEN} MATCHES "NONE")
   if (${WITH_EIGEN} MATCHES "AUTOBUILD")
     # Download it
     set(OP_URL "${DOWNLOAD_SERVER}3rdparty/")
-    set(FIND_LIB_PREFIX ${CMAKE_SOURCE_DIR}/3rdparty/)
+    set(FIND_LIB_PREFIX ${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/)
     download_zip("eigen_2020_11_18.zip" ${OP_URL} ${FIND_LIB_PREFIX} 57672715C62C1A795300FE1AE4D2687E)
     # Set path
     set(EIGEN3_INCLUDE_DIRS "3rdparty/eigen/include/")
@@ -510,13 +510,13 @@ if (UNIX OR APPLE)
 
     if (NOT CUDA_FOUND)
       message(STATUS "CUDA not found.")
-      execute_process(COMMAND cat install_cuda.sh WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}/scripts/ubuntu)
+      execute_process(COMMAND cat install_cuda.sh WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/scripts/ubuntu)
       message(FATAL_ERROR "Install CUDA using the above commands.")
     endif (NOT CUDA_FOUND)
 
     if (USE_CUDNN AND NOT CUDNN_FOUND)
       message(STATUS "cuDNN not found.")
-      execute_process(COMMAND cat install_cudnn_up_to_Ubuntu16.sh WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}/scripts/ubuntu)
+      execute_process(COMMAND cat install_cudnn_up_to_Ubuntu16.sh WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/scripts/ubuntu)
       message(FATAL_ERROR "Install cuDNN using the above commands. or turn off cuDNN by setting USE_CUDNN to OFF.")
     endif (USE_CUDNN AND NOT CUDNN_FOUND)
   endif (${GPU_MODE} MATCHES "CUDA")
@@ -545,12 +545,12 @@ if (WIN32)
   endif ("${CMAKE_VERSION}" VERSION_GREATER 3.6.3)
 
   set_property(GLOBAL PROPERTY USE_FOLDERS ON)
-  set(FIND_LIB_PREFIX ${CMAKE_SOURCE_DIR}/3rdparty/windows)
+  set(FIND_LIB_PREFIX ${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/windows)
 
   # Download Windows 3rd party
   message(STATUS "Downloading windows dependencies...")
   set(OP_WIN_URL "${DOWNLOAD_SERVER}3rdparty/windows")
-  set(OP_WIN_DIR "${CMAKE_SOURCE_DIR}/3rdparty/windows")
+  set(OP_WIN_DIR "${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/windows")
 
   # Download required zip files
   download_zip("opencv_450_v15_2020_11_18.zip" ${OP_WIN_URL} ${FIND_LIB_PREFIX} AFB1BD1A160C43CF5FB856C8BB4FC483)
@@ -666,27 +666,27 @@ if (WIN32)
     # Locate and copy DLLs
     # Caffe DLLs
     if (${GPU_MODE} MATCHES "CUDA")
-      file(GLOB CAFFE_DLL "${CMAKE_SOURCE_DIR}/3rdparty/windows/caffe/bin/*.dll")
+      file(GLOB CAFFE_DLL "${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/windows/caffe/bin/*.dll")
     elseif (${GPU_MODE} MATCHES "OPENCL")
-      file(GLOB CAFFE_DLL "${CMAKE_SOURCE_DIR}/3rdparty/windows/caffe_opencl/bin/*.dll")
+      file(GLOB CAFFE_DLL "${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/windows/caffe_opencl/bin/*.dll")
     elseif (${GPU_MODE} MATCHES "CPU_ONLY")
-      file(GLOB CAFFE_DLL "${CMAKE_SOURCE_DIR}/3rdparty/windows/caffe_cpu/bin/*.dll")
+      file(GLOB CAFFE_DLL "${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/windows/caffe_cpu/bin/*.dll")
     endif ()
     file(COPY ${CAFFE_DLL} DESTINATION ${BIN_FOLDER})
     # Caffe 3rd-party DLLs
-    file(GLOB CAFFE_3RD_PARTY_DLL "${CMAKE_SOURCE_DIR}/3rdparty/windows/caffe3rdparty/lib/*.dll")
+    file(GLOB CAFFE_3RD_PARTY_DLL "${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/windows/caffe3rdparty/lib/*.dll")
     file(COPY ${CAFFE_3RD_PARTY_DLL} DESTINATION ${BIN_FOLDER})
     # OpenCV DLLs
-    file(GLOB OPENCV_DLL "${CMAKE_SOURCE_DIR}/3rdparty/windows/opencv/x64/vc${OPENCV_VS_VERSION}/bin/*.dll")
+    file(GLOB OPENCV_DLL "${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/windows/opencv/x64/vc${OPENCV_VS_VERSION}/bin/*.dll")
     file(COPY ${OPENCV_DLL} DESTINATION ${BIN_FOLDER})
     # GLUT DLLs
     if (WITH_3D_RENDERER OR WITH_3D_ADAM_MODEL)
-      file(GLOB GLUT_DLL "${CMAKE_SOURCE_DIR}/3rdparty/windows/freeglut/bin/*.dll")
+      file(GLOB GLUT_DLL "${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/windows/freeglut/bin/*.dll")
       file(COPY ${GLUT_DLL} DESTINATION ${BIN_FOLDER})
     endif (WITH_3D_RENDERER OR WITH_3D_ADAM_MODEL)
     # Spinnaker DLLs and other files
     if (WITH_FLIR_CAMERA)
-      file(GLOB SPINNAKER_DLL "${CMAKE_SOURCE_DIR}/3rdparty/windows/spinnaker/bin/*")
+      file(GLOB SPINNAKER_DLL "${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/windows/spinnaker/bin/*")
       file(COPY ${SPINNAKER_DLL} DESTINATION ${BIN_FOLDER})
     endif (WITH_FLIR_CAMERA)
   endif (BUILD_BIN_FOLDER)
@@ -712,10 +712,10 @@ if (UNIX OR APPLE)
         on your internet connection.")
 
       # Check if pulled
-      file(GLOB CAFFE_DIR_VALID ${CMAKE_SOURCE_DIR}/3rdparty/caffe/*)
+      file(GLOB CAFFE_DIR_VALID ${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/caffe/*)
       list(LENGTH CAFFE_DIR_VALID CAFFE_DIR_VALID_LENGTH)
       if (CAFFE_DIR_VALID_LENGTH EQUAL 0)
-        execute_process(COMMAND git submodule update --init ${CMAKE_SOURCE_DIR}/3rdparty/caffe)
+        execute_process(COMMAND git submodule update --init ${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/caffe)
         # execute_process(COMMAND git submodule update --init --recursive --remote) # This would initialize them all
       else (CAFFE_DIR_VALID_LENGTH EQUAL 0)
         message(STATUS "Caffe has already been downloaded.")
@@ -724,13 +724,13 @@ if (UNIX OR APPLE)
       # Build Process
       set(CAFFE_CPU_ONLY OFF)
       if (${GPU_MODE} MATCHES "CUDA")
-        # execute_process(COMMAND git checkout master WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}/3rdparty/caffe)
-        execute_process(COMMAND git checkout 1807aad WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}/3rdparty/caffe)
+        # execute_process(COMMAND git checkout master WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/caffe)
+        execute_process(COMMAND git checkout 1807aad WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/caffe)
       elseif (${GPU_MODE} MATCHES "CPU_ONLY")
         if (USE_MKL)
-          #execute_process(COMMAND git checkout intel WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}/3rdparty/caffe)
-          execute_process(COMMAND git checkout b6712ce WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}/3rdparty/caffe)
-          execute_process(COMMAND sh prepare_mkl.sh WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}/3rdparty/caffe/external/mkl
+          #execute_process(COMMAND git checkout intel WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/caffe)
+          execute_process(COMMAND git checkout b6712ce WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/caffe)
+          execute_process(COMMAND sh prepare_mkl.sh WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/caffe/external/mkl
               OUTPUT_VARIABLE rv)
           set( MLIST ${rv} )
           separate_arguments(MLIST)
@@ -742,7 +742,7 @@ if (UNIX OR APPLE)
           file(COPY ${MKL_SO} DESTINATION ${CMAKE_BINARY_DIR}/caffe)
 
           # New MLSL Lib
-          #execute_process(COMMAND sh prepare_mlsl.sh WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}/3rdparty/caffe/external/mlsl
+          #execute_process(COMMAND sh prepare_mlsl.sh WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/caffe/external/mlsl
           #    OUTPUT_VARIABLE rv)
           #set( MLIST ${rv} )
           #separate_arguments(MLIST)
@@ -760,13 +760,13 @@ if (UNIX OR APPLE)
             "${CMAKE_BINARY_DIR}/caffe/lib/libmkldnn.so"
             )
         else (USE_MKL)
-          # execute_process(COMMAND git checkout master WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}/3rdparty/caffe)
-          execute_process(COMMAND git checkout 1807aad WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}/3rdparty/caffe)
+          # execute_process(COMMAND git checkout master WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/caffe)
+          execute_process(COMMAND git checkout 1807aad WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/caffe)
         endif (USE_MKL)
         set(CAFFE_CPU_ONLY ON)
         set(USE_CUDNN OFF)
       elseif (${GPU_MODE} MATCHES "OPENCL")
-        execute_process(COMMAND git checkout fe2a1102 WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}/3rdparty/caffe)
+        execute_process(COMMAND git checkout fe2a1102 WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/caffe)
         set(USE_CUDNN OFF)
       endif (${GPU_MODE} MATCHES "CUDA")
 
@@ -775,7 +775,7 @@ if (UNIX OR APPLE)
       find_package(Caffe)
       include(ExternalProject)
       set(CAFFE_PREFIX caffe)
-      set(CAFFE_URL ${CMAKE_SOURCE_DIR}/3rdparty/caffe)
+      set(CAFFE_URL ${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/caffe)
 
       # One for Intel Branch and one for Master
       if (USE_MKL)
@@ -825,7 +825,7 @@ if (UNIX OR APPLE)
       if (NOT Caffe_FOUND)
         add_custom_command(TARGET openpose_lib
             POST_BUILD
-            COMMAND ${CMAKE_COMMAND} ${CMAKE_SOURCE_DIR}
+            COMMAND ${CMAKE_COMMAND} ${CMAKE_CURRENT_SOURCE_DIR}
             COMMAND $(MAKE)
             WORKING_DIRECTORY ${CMAKE_BINARY_DIR}
             COMMENT "Rerunning cmake after building Caffe submodule")
@@ -850,7 +850,7 @@ include_directories(
   ${OpenCV_INCLUDE_DIRS})
 
 if (USE_ASIO)
-  include_directories(${CMAKE_SOURCE_DIR}/3rdparty/asio/include/)
+  include_directories(${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/asio/include/)
   # OpenPose flags
   add_definitions(-DUSE_ASIO)
   # Tell Asio it is not using Boost
@@ -999,12 +999,12 @@ message(STATUS "Models Downloaded.")
 ### PYTHON
 if (BUILD_PYTHON)
   if (WIN32)
-    execute_process(COMMAND cmd /c cd ${CMAKE_SOURCE_DIR} & git submodule update --init 3rdparty/pybind11/)
+    execute_process(COMMAND cmd /c cd ${CMAKE_CURRENT_SOURCE_DIR} & git submodule update --init 3rdparty/pybind11/)
     add_subdirectory(3rdparty/pybind11)
     add_subdirectory(python)
   elseif (UNIX OR APPLE)
     if (Caffe_FOUND)
-      execute_process(COMMAND git submodule update --init ${CMAKE_SOURCE_DIR}/3rdparty/pybind11/)
+      execute_process(COMMAND git submodule update --init ${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/pybind11/)
       # execute_process(COMMAND git submodule update --init --recursive --remote) # This would initialize them all
       add_subdirectory(3rdparty/pybind11)
       add_subdirectory(python)
@@ -1022,12 +1022,12 @@ if (UNIX OR APPLE)
     find_package(Doxygen)
     if (DOXYGEN_FOUND)
       # Set input and output files
-      set(DOXYGEN_FILE ${CMAKE_SOURCE_DIR}/.doc_autogeneration.doxygen)
+      set(DOXYGEN_FILE ${CMAKE_CURRENT_SOURCE_DIR}/.doc_autogeneration.doxygen)
 
       # Custom target to build the documentation
       add_custom_target(doc_doxygen ALL
         COMMAND ${DOXYGEN_EXECUTABLE} ${DOXYGEN_FILE}
-        WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}/doc
+        WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/doc
         COMMENT "Generating API documentation with Doxygen"
         VERBATIM)
     else (DOXYGEN_FOUND)
@@ -1042,7 +1042,7 @@ endif (UNIX OR APPLE)
 if (UNIX OR APPLE)
   if (Caffe_FOUND)
     # Install the headers
-    install(DIRECTORY ${CMAKE_SOURCE_DIR}/include/openpose DESTINATION include)
+    install(DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/include/openpose DESTINATION include)
     install(EXPORT OpenPose DESTINATION lib/OpenPose)
     if (BUILD_CAFFE)
       install(DIRECTORY ${CMAKE_BINARY_DIR}/caffe/include/caffe DESTINATION include)
@@ -1051,7 +1051,7 @@ if (UNIX OR APPLE)
 
     # Compute installation prefix relative to this file
     configure_file(
-      ${CMAKE_SOURCE_DIR}/cmake/OpenPoseConfig.cmake.in
+      ${CMAKE_CURRENT_SOURCE_DIR}/cmake/OpenPoseConfig.cmake.in
       ${CMAKE_BINARY_DIR}/cmake/OpenPoseConfig.cmake @ONLY)
 
     install(FILES ${CMAKE_BINARY_DIR}/cmake/OpenPoseConfig.cmake
@@ -1059,7 +1059,7 @@ if (UNIX OR APPLE)
 
     # Uninstall target
     configure_file(
-      "${CMAKE_SOURCE_DIR}/cmake/cmake_uninstall.cmake.in"
+      "${CMAKE_CURRENT_SOURCE_DIR}/cmake/cmake_uninstall.cmake.in"
       "${CMAKE_BINARY_DIR}/cmake_uninstall.cmake"
       IMMEDIATE @ONLY)
 
